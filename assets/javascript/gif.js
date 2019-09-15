@@ -4,21 +4,39 @@ let topics = ["Orlando", "Florida", "Paris", "France", "Maryland"];
 console.log("It's working");
 
 // GIPHY URL
+// function displayGif() {
 
-//javascript, jQuery GIPHY URL, which will include a user input search & 10 gif limit
-// var queryURL = "https://api.giphy.com/v1/gifs/trending?api_key=nf5xbhF78wvJVnNt6j0vQ9XrNgNlkPL9";
+//     let gif = $(this).attr("data-name");
+//     //javascript, jQuery GIPHY URL, which will include a user input search & 10 gif limit
+$("#gifBtn").on("click", function () {
+    var gifImg = $(this).attr("data-name");
+    var queryURL = `"https://api.giphy.com/v1/gifs/search?&api_key=nf5xbhF78wvJVnNt6j0vQ9XrNgNlkPL9&q=${gifImg}&limit=3"`;
 
-// $.ajax({
-//     url: queryURL,
-//     method: "GET"
-// }).then(function (response) {
-//     console.log("success got data", response);
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    }).then(function (response) {
+        console.log("success got data", response);
 
-// });
+        let results = response.data;
 
+        for (let i = 0; i < results.length; i++) {
+            console.log("Pictures are loading");
+            var imagesDiv = $("<div>");
 
+            let placeImg = $("<img>");
+            placeImg.attr("src", results[i].images.fixed_height.url);
 
+            imagesDiv.prepend(placeImg);
+
+        }
+    });
+});
+
+// Function to render topics array items
 function renderButtons() {
+
+    // Removes buttons that do not display topics array items
     $("#gifBtn").empty();
 
     for (let i = 0; i < topics.length; i++) {
@@ -32,21 +50,26 @@ function renderButtons() {
         btn.text(topics[i]);
         $("#gifBtn").append(btn);
     }
+
 }
 // Take the topics array, and create an element to hold new buttons
-$("#addGif").on("click", function(event) {
+$("#addGif").on("click", function (event) {
+
     // event.preventDefault() prevents the form from trying to submit itself.
-    // We're using a form so that the user can hit enter instead of clicking the button if they want
     event.preventDefault();
 
     // This line will grab the text from the input box
-    let gif = $("#gifInput").val().trim();
-    // The movie from the textbox is then added to our array
-    topics.push(gif);
+    let gifName = $("#gifInput").val().trim();
 
-    // calling renderButtons which handles the processing of our movie array
+    // Items from the topics array will be placed on the window as buttons
+    topics.push(gifName);
+    console.log(topics);
+
+    // calling renderButtons which handles the processing of our topics array
     renderButtons();
 });
+
+// $(document).on("click", ".gif", displayGif);
 
 renderButtons();
 
