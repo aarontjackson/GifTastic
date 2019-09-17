@@ -47,11 +47,26 @@ $(document).ready(function () {
 
                     var foodImage = $("<img>");
                     foodImage.attr("src", results[i].images.fixed_height_still.url);
+                    foodImage.attr("data-still", results[i].images.fixed_height_still.url);
+                    foodImage.attr("data-animate", results[i].images.fixed_height.url);
+                    foodImage.attr("data-state", "still");
+                    foodImage.addClass("move");
 
                     gifDiv.prepend(p);
                     gifDiv.prepend(foodImage);
-                    $(".container").append(gifDiv);
+                    $("#gif-box").append(gifDiv);
                 }
+                $(".move").on("click", function () {
+                    var state = $(this).attr("data-state");
+                    if (state === "still") {
+                        $(this).attr("src", $(this).attr("data-animate"));
+                        $(this).attr("data-state", "animate");
+                    }
+                    else {
+                        $(this).attr("src", $(this).attr("data-still"));
+                        $(this).attr("data-state", "still");
+                    }
+                });
             });
     };
 
@@ -75,7 +90,5 @@ $(document).ready(function () {
     renderButtons();
 
     $(document).on("click", ".gif-btn", displayGif);
-
-
 
 });
