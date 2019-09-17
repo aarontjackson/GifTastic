@@ -5,80 +5,77 @@ $(document).ready(function () {
     let topics = ["Apple", "Orange", "Grape", "Banana", "Dragonfruit"];
     console.log("It's working");
 
-    // GIPHY URL
-    //javascript, jQuery GIPHY URL, which will include a user input search & 10 gif limit
-    $("button").on("click", function() {
-
-        var gifImg = $(this).attr("data-name");
-
-        // var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + gifImg + "&api_key=" + apiKey + "&limit=5";
-
-        $.get("http://api.giphy.com/v1/gifs/search?q=" + gifImg + "&api_key=nf5xbhF78wvJVnNt6j0vQ9XrNgNlkPL9&limit=5")
-            .then(function (response) {
-            console.log("data is displaying");
-
-            var results = response.data;
-        
-            for (let i = 0; i < results.length; i++) {
-                console.log(results.length);
-
-                renderButtons();
-
-                if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
-
-                    var gifDiv = $("<div>");
-
-                    var ratingVal = $("<p>").text("Rating: " + results[i].rating);
-
-                    var foodImage = $("<img>");
-
-                    foodImage.attr("src", results[i].images.fixed_height_still.url);
-
-                    gifDiv.append(ratingVal);
-                    gifDiv.append(foodImage);
-                    $("#gif-box").prepend(gifDiv);
-                }
-            }
-        });
-    });
-
-
     // Function to render topics array items
     function renderButtons() {
 
         // Removes buttons that do not display topics array items
-        $("#gifBtn").empty();
+        $("#gifBtn.panel-body").empty();
 
         for (let i = 0; i < topics.length; i++) {
             console.log("button was a success");
-
+            // create element for text to display in button
             var btn = $("<button>");
             btn.addClass("gif-btn");
             btn.attr("data-name", topics[i]);
             btn.text(topics[i]);
-            $("#gifBtn").append(btn);
+            $("#gifBtn.panel-body").append(btn);
         }
+    };
 
-    }
-    // Take the topics array, and create an element to hold new buttons
-    $("#addGif").on("click", function (event) {
+    // GIPHY URL
+    //javascript, jQuery GIPHY URL, which will include a user input search & 10 gif limit
+    function displayGif() {
 
-        // event.preventDefault() prevents the form from trying to submit itself.
+        $("#gif-box").empty();
+
+        var gifName = $(this).attr("data-name");
+
+        $.get("http://api.giphy.com/v1/gifs/search?q=" + gifName + "&api_key=nf5xbhF78wvJVnNt6j0vQ9XrNgNlkPL9&limit=10")
+            .done(function (response) {
+                console.log("data is displaying", response);
+
+                // results equals the entire API data
+                var results = response.data;
+
+                for (let i = 0; i < results.length; i++) {
+                    console.log(results.length);
+
+                    var gifDiv = $("<div>");
+
+                    var rating = results[i].rating;
+                    var p = $("<p>").text("Rating: " + rating);
+
+                    var foodImage = $("<img>");
+                    foodImage.attr("src", results[i].images.fixed_height_still.url);
+
+                    gifDiv.prepend(p);
+                    gifDiv.prepend(foodImage);
+                    $(".container").append(gifDiv);
+                }
+            });
+    };
+
+    $("#add-button").on("click", function (event) {
+        console.log("click is working");
         event.preventDefault();
 
-        // This line will grab the text from the input box
-        var gifVal = $("#gifInput").val().trim();
+        var foodInput = $("#user-input").val();
 
-        // Items from the topics array will be placed on the window as buttons
-        topics.push(gifVal);
+        $("#user-input").val("");
 
-        // calling renderButtons which handles the processing of our topics array
-        renderButtons();
+        if (topics.indexOf(foodInput) === -1) {
+
+            topics.push(foodInput);
+            console.log(topics);
+
+            renderButtons();
+        }
     });
 
-    // $(document).on("click", ".gif-btn", displayGif);
-
     renderButtons();
-  
+
+    $(document).on("click", ".gif-btn", displayGif);
+
+
 
 });
